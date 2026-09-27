@@ -101,7 +101,38 @@ public class SinglyLinkedList<E extends Comparable<E>> {
 
     // write your codes here
     public void swap(){
-        
+        if (size < 2) {
+            return;
+        }
+
+        // Keep the original positions while sorting a second view of the nodes.
+        // A node at rank i is exchanged with the node at rank size - 1 - i.
+        List<Node<E>> originalOrder = new ArrayList<>(size);
+        Node<E> current = head;
+        while (current != null) {
+            originalOrder.add(current);
+            current = current.getNext();
+        }
+
+        List<Node<E>> sortedNodes = new ArrayList<>(originalOrder);
+        sortedNodes.sort((firstNode, secondNode) ->
+            firstNode.getElement().compareTo(secondNode.getElement()));
+
+        Map<Node<E>, Node<E>> swappedNode = new IdentityHashMap<>();
+        for (int i = 0; i < size; i++) {
+            swappedNode.put(sortedNodes.get(i), sortedNodes.get(size - 1 - i));
+        }
+
+        head = swappedNode.get(originalOrder.get(0));
+        current = head;
+        for (int i = 1; i < size; i++) {
+            Node<E> next = swappedNode.get(originalOrder.get(i));
+            current.setNext(next);
+            current = next;
+        }
+
+        tail = current;
+        tail.setNext(null);
 
     }
    
